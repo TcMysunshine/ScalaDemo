@@ -3,9 +3,12 @@ package com.chenhao.scala
 import org.apache.spark.graphx.{Graph, GraphLoader, VertexId, VertexRDD}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
-
+import org.apache.log4j.{Level, Logger}
 object ConnectComponentTest {
   def main(args: Array[String]): Unit = {
+//    #屏蔽日志
+    Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
+    Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
     val filepath = "/Users/chenhao/Documents/Data/GraphxData/ConnectComponent/"
     val conf: SparkConf = new SparkConf().setAppName(this.getClass.getSimpleName).setMaster("local")
     val sc: SparkContext = new SparkContext(conf)
@@ -13,9 +16,11 @@ object ConnectComponentTest {
     val graph: Graph[Int, Int] = GraphLoader.edgeListFile(sc,filepath + "follower.txt")
     graph.vertices.collect.foreach(println(_))
     //计算连通体
+    println("ConnectedComponents")
     val components: Graph[VertexId, Int] = graph.connectedComponents()
+//    val components: Graph[VertexId, Int] = graph.stronglyConnectedComponents(10)
     val vertices: VertexRDD[VertexId] = components.vertices
-//    vertices.foreach(println(_))
+    vertices.foreach(println(_))
     /**
       * vertices：
       * (4,1)
@@ -40,17 +45,21 @@ object ConnectComponentTest {
       * (6,matei_zaharia)
       * (7,odersky)
       * (8,anonsys)
+      * (
       */
     users.join(vertices).map{
       case(id,(username,vertices))=>(vertices,username)
     }.groupByKey().map(t=>{
       t._1+"->"+t._2.mkString(",")
     }).foreach(println(_))
+    val subgraph = graph.subgraph(epred => epred.dstId ==2  )
+    subgraph.triplets.collect.foreach(println(_))
     /**
       * 得到结果为：
       * 1->justinbieber,BarackObama,ladygaga
       * 3->matei_zaharia,jeresig,odersky
       */
+
   }
 
 }

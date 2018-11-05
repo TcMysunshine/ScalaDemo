@@ -33,8 +33,11 @@ object Test extends App{
   val vertexRDD: RDD[(Long, (String, Int))] = sc.parallelize(vertexArray)
   val edgeRDD: RDD[Edge[Int]] = sc.parallelize(edgeArray)
   val graph: Graph[(String, Int), Int] = Graph(vertexRDD, edgeRDD)
+//  val graph = Graph.fromEdges(edgeRDD,("chenhao",23))
+//val graph = Graph.fromEdgeTuples(edgeRDD,("chenhao",23))
+  graph.vertices.foreach( println(_))
   graph.reverse.triplets.foreach(t => println(s"${t.srcAttr} + ${t.dstAttr}+ ${t.attr}"))
-//  graph.subgraph(epred = {srcid,dstid,attr}=>edge.)
+  graph.subgraph(epred => epred.srcAttr._2>12)
 //  graph.mask()
 //  顶点过滤
 //  println("vertices filter")
@@ -58,16 +61,16 @@ object Test extends App{
 //    if (a._2>b._2) a else b
 //  }
 //  println("max indegree" + graph.inDegrees.reduce(max) + "max outdegree" + graph.outDegrees.reduce(max))
-  case class User(name:String, age:Int, inDeg:Int, outDeg:Int)
-  val initialUserGraph: Graph[User,Int] = graph.mapVertices{
-    case (id,(name,age)) => User(name, age, 0, 0)
-  }
-  initialUserGraph.vertices.foreach(println(_))
-  val UserGraph = initialUserGraph.outerJoinVertices(initialUserGraph.inDegrees){
-    case (id,u,inDegOpt) =>User(u.name,u.age,inDegOpt.getOrElse(0),u.outDeg)
-  }.outerJoinVertices(initialUserGraph.outDegrees){
-    case (id,u,outDegOpt) =>User(u.name,u.age,u.inDeg,outDegOpt.getOrElse(0))
-  }
-
+//  case class User(name:String, age:Int, inDeg:Int, outDeg:Int)
+//  val initialUserGraph: Graph[User,Int] = graph.mapVertices{
+//    case (id,(name,age)) => User(name, age, 0, 0)
+//  }
+//  initialUserGraph.vertices.foreach(println(_))
+//  val UserGraph = initialUserGraph.outerJoinVertices(initialUserGraph.inDegrees){
+//    case (id,u,inDegOpt) =>User(u.name,u.age,inDegOpt.getOrElse(0),u.outDeg)
+//  }.outerJoinVertices(initialUserGraph.outDegrees){
+//    case (id,u,outDegOpt) =>User(u.name,u.age,u.inDeg,outDegOpt.getOrElse(0))
+//  }
+//  UserGraph.vertices.foreach(println(_))
 //  UserGraph.triplets.foreach(t => println(s"${t.srcAttr}+${t.dstAttr}+${t.attr}"))
 }

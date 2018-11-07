@@ -1,18 +1,23 @@
 package com.chenhao.scala
 
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.graphx.{Edge, Graph, VertexId}
-import org.apache.spark.rdd.RDD;
+import org.apache.spark.rdd.RDD
+
+import scala.collection.mutable.ArrayBuffer;
 
 /**
   * Hello world!
   *
   */
 object Test extends App{
+  Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
+  Logger.getLogger("org.eclipse.jetty.server").setLevel(Level.OFF)
   val conf = new SparkConf().setAppName("scalatest").setMaster("local[*]")
   val sc = new SparkContext(conf)
-  val vertexArray = Array(
+  val vertexArray = ArrayBuffer(
     (1L, ("Alice", 28)),
     (2L, ("Bob", 27)),
     (3L, ("Charlie", 65)),

@@ -2,7 +2,7 @@ package com.chenhao.scala
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.graphx.{Edge, Graph, lib}
+import org.apache.spark.graphx.{Edge, Graph, VertexId, lib}
 import org.apache.spark.rdd.RDD
 
 object SVDPP {
@@ -68,5 +68,7 @@ object SVDPP {
     //    lpa.collect.foreach(println(_))
 
     sc.stop()
+//    val dst:VertexId = 10L
+//    lib.ShortestPaths.run(graph,dst )
   }
 }
